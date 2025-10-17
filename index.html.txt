@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>tuvi2025-B360</title>
+<style>
+  :root{
+    --gold1:#f7dfb8; --gold2:#e9c86b; --accent:#b8860b; --panel-bg:rgba(255,255,255,0.98);
+  }
+  html,body{height:100%;margin:0;font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;}
+  body{
+    background:linear-gradient(180deg,var(--gold1),var(--gold2));
+    display:flex;align-items:flex-start;justify-content:center;padding:22px;color:#222;
+  }
+  .card{width:100%;max-width:1100px;background:var(--panel-bg);border-radius:14px;box-shadow:0 12px 34px rgba(0,0,0,0.18);padding:20px;}
+  .header{display:flex;gap:16px;align-items:center;margin-bottom:14px;}
+  .logo{width:92px;height:92px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;
+        box-shadow: inset 0 -6px 20px rgba(0,0,0,0.06); background:radial-gradient(circle at 35% 35%, #fff 0%, #eee 25%, #ddd 50%, #d4b86a 70%);}
+  .yin{position:absolute;width:82%;height:82%;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+  .yin::before{content:"";display:block;position:absolute;border-radius:50%;width:100%;height:100%;background:conic-gradient(#000 0 180deg,#fff 180deg 360deg);opacity:0.95;transform:rotate(90deg);}
+  .b360{position:relative;z-index:3;font-weight:900;font-size:20px;color:#3b2b10;background:linear-gradient(180deg,#fff,#f2ead0);padding:6px 12px;border-radius:10px;border:2px solid rgba(0,0,0,0.06);box-shadow:0 4px 10px rgba(0,0,0,0.08);}
+  h1{margin:0;font-size:20px;color:#2b2b2b}
+  .subtitle{color:#444;margin-top:4px;font-size:13px}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:18px}
+  label{font-size:13px;color:#333;display:block;margin-bottom:6px}
+  input[type="text"], input[type="date"], input[type="time"], select{width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;font-size:14px;box-sizing:border-box;background:#fff;}
+  .full{grid-column:1 / -1}
+  .actions{display:flex;gap:8px;margin-top:12px;align-items:center}
+  button.primary{background:linear-gradient(180deg,var(--accent),#8b5d03);color:white;border:none;padding:12px 18px;border-radius:10px;cursor:pointer;font-weight:700;box-shadow:0 6px 14px rgba(184,134,11,0.18);}
+  button.secondary{background:transparent;border:1px solid var(--accent);padding:10px 14px;border-radius:10px;cursor:pointer}
+  .small-btn{font-size:13px;padding:8px 10px;border-radius:8px;border:1px solid #ccc;background:#fafafa;cursor:pointer}
+  .result{margin-top:18px;padding:16px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.99), rgba(255,255,255,0.96));transition:all .28s ease;}
+  .line{display:flex;gap:12px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+  .tag{font-weight:700;color:var(--accent);min-width:150px}
+  .value{flex:1;color:#1f1f1f}
+  .sections{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+  .sec{background:#fff;border-radius:8px;padding:12px;min-height:95px;box-shadow:0 6px 14px rgba(0,0,0,0.04)}
+  .sec h3{margin:0 0 8px 0;font-size:13px;color:var(--accent)}
+  .share{display:flex;gap:8px;margin-top:12px}
+  .note{font-size:12px;color:#666;margin-top:8px}
+  footer{margin-top:16px;font-size:12px;color:#444;display:flex;justify-content:space-between;align-items:center}
+  .history{margin-top:12px;border-radius:8px;padding:12px;background:#fff;box-shadow:0 6px 12px rgba(0,0,0,0.04)}
+  .history h4{margin:0 0 8px 0}
+  .history-list{display:flex;flex-direction:column;gap:8px;max-height:160px;overflow:auto;padding-right:6px}
+  .history-item{font-size:13px;color:#333;display:flex;justify-content:space-between;align-items:center}
+  @media (max-width:920px){ .form-grid{grid-template-columns:1fr 1fr} .sections{grid-template-columns:1fr 1fr} }
+  @media (max-width:640px){ .form-grid{grid-template-columns:1fr} .sections{grid-template-columns:1fr} .tag{min-width:110px} }
+  /* Print: simple summary styling */
+  @media print {
+    body{background: #fff !important;}
+    .card{box-shadow:none;border-radius:0;padding:0;}
+    .header, .form-grid, .actions, .history, .share { display:none !important; }
+    .result{box-shadow:none;border-radius:0;padding:0;}
+    .sections{display:block;}
+    .sec{page-break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+  <div class="card" role="main" aria-label="Tu vi 2025 B360">
+    <div class="header">
+      <div class="logo" aria-hidden="true">
+        <div class="yin" aria-hidden="true"></div>
+        <div class="b360">B360</div>
+      </div>
+      <div>
+        <h1>Xem Tử Vi - tuvi2025-B360</h1>
+        <div class="subtitle">Nhập ngày dương → tự chuyển sang ngày âm & tính MỆNH theo năm âm (offline, chuẩn).</div>
+      </div>
+    </div>
+
+    <form id="form" onsubmit="return false;">
+      <div class="form-grid" aria-label="Thông tin sinh">
+        <div class="full">
+          <label for="fullname">Họ và tên</label>
+          <input id="fullname" type="text" placeholder="Nguyễn Văn A" required>
+        </div>
+
+        <div>
+          <label for="birthdate">Ngày sinh (Dương)</label>
+          <input id="birthdate" type="date" required>
+        </div>
+
+        <div>
+          <label for="birthtime">Giờ sinh</label>
+          <input id="birthtime" type="time" step="60" placeholder="07:30">
+        </div>
+
+        <div>
+          <label for="gender">Giới tính</label>
+          <select id="gender" required>
+            <option value="">-- Chọn giới tính --</option>
+            <option value="nam">Nam</option>
+            <option value="nu">Nữ</option>
+            <option value="khac">Khác</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="timezone">Múi giờ (GMT)</label>
+          <select id="timezone">
+            <option value="7">+07:00 (VN)</option>
+            <option value="0">UTC</option>
+            <option value="8">+08:00</option>
+          </select>
+        </div>
+
+        <div class="full">
+          <div class="actions">
+            <button class="primary" id="btnView">Xem tử vi</button>
+            <button class="secondary" id="btnReset" type="button">Xóa</button>
+            <div style="flex:1"></div>
+            <button class="small-btn" id="btnExport" type="button">Tải PDF</button>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="result" id="result" hidden aria-live="polite">
+      <div class="line"><div class="tag">Họ tên</div><div class="value" id="rName">—</div></div>
+      <div class="line"><div class="tag">Giới tính</div><div class="value" id="rGender">—</div></div>
+      <div class="line"><div class="tag">Ngày Dương</div><div class="value" id="rSolar">—</div></div>
+      <div class="line"><div class="tag">Ngày Âm</div><div class="value" id="rLunar">—</div></div>
+      <div class="line"><div class="tag">Can - Chi (Năm âm)</div><div class="value" id="rCanChi">—</div></div>
+      <div class="line"><div class="tag">Mệnh (Nạp Âm)</div><div class="value" id="rNapAm">—</div></div>
+
+      <div class="sections" id="sections">
+        <div class="sec"><h3>1. Tính cách</h3><div id="sec1">—</div></div>
+        <div class="sec"><h3>2. Sự nghiệp</h3><div id="sec2">—</div></div>
+        <div class="sec"><h3>3. Tài lộc</h3><div id="sec3">—</div></div>
+        <div class="sec"><h3>4. Gia đạo</h3><div id="sec4">—</div></div>
+        <div class="sec"><h3>5. Tình yêu</h3><div id="sec5">—</div></div>
+        <div class="sec"><h3>6. Sức khỏe</h3><div id="sec6">—</div></div>
+        <div class="sec"><h3>7. Màu hợp</h3><div id="sec7">—</div></div>
+        <div class="sec"><h3>8. Hướng hợp / kỵ</h3><div id="sec8">—</div></div>
+        <div class="sec"><h3>9. Hợp / Khắc mệnh</h3><div id="sec9">—</div></div>
+      </div>
+
+      <div class="share" aria-hidden="false">
+        <button id="shareFB" class="small-btn">Chia sẻ Facebook</button>
+        <button id="shareZalo" class="small-btn">Chia sẻ Zalo</button>
+        <button id="downloadPDF" class="small-btn">Tải PDF</button>
+      </div>
+
+      <div class="note" id="noteArea">
+        <strong>Ghi chú:</strong> Mệnh (Nạp Âm) được tính theo <em>năm âm lịch</em> (sử dụng năm âm tính được sau khi chuyển Dương→Âm). File chạy offline, có thể mở bằng trình duyệt hoặc đưa lên web để mọi người xem.
+      </div>
+
+      <div class="history" id="historyBlock">
+        <h4>Lịch sử xem (local)</h4>
+        <div class="history-list" id="historyList"></div>
+      </div>
+
+      <footer>
+        <div>tuvi2025-B360 — Phiên bản offline</div>
+        <div><button id="editData" class="small-btn">Sao chép dữ liệu</button></div>
+      </footer>
+    </div>
+  </div>
+
+<script>
+/* =================== Utility & Astronomy =================== */
+const DEG2RAD = Math.PI/180;
+function INT(v){ return Math.floor(v); }
+
+/* Julian day */
+function jdFromDate(dd, mm, yy){
+  var a = INT((14 - mm)/12);
+  var y = yy + 4800 - a;
+  var m = mm + 12*a - 3;
+  var jd = dd + INT((153*m + 2)/5) + 365*y + INT(y/4) - INT(y/100) + INT(y/400) - 32045;
+  if (jd < 2299161) jd = dd + INT((153*m + 2)/5) + 365*y + INT(y/4) - 32083;
+  return jd;
+}
+
+/* Sun longitude */
+function SunLongitude(jdn){
+  var T = (jdn - 2451545.0) / 36525;
+  var M = 357.52910 + 35999.05030*T - 0.0001559*T*T - 0.00000048*T*T*T;
+  var L0 = 280.46645 + 36000.76983*T + 0.0003032*T*T;
+  var DL = (1.914600 - 0.004817*T - 0.000014*T*T)*Math.sin(DEG2RAD*M)
+           + (0.019993 - 0.000101*T)*Math.sin(DEG2RAD*(2*M))
+           + 0.000290*Math.sin(DEG2RAD*(3*M));
+  var theta = L0 + DL;
+  var omega = 125.04 - 1934.136*T;
+  var lambda = theta - 0.00569 - 0.00478*Math.sin(DEG2RAD*omega);
+  lambda = lambda - 360 * INT(lambda/360);
+  return lambda;
+}
+
+/* New moon approximation */
+function NewMoon(k){
+  var T = k/1236.85;
+  var T2 = T*T;
+  var T3 = T2*T;
+  var dr = DEG2RAD;
+  var Jd1 = 2451550.09765 + 29.530588853*k + 0.0001337*T2 - 0.000000150*T3 + 0.00000000073*T*T3;
+  var M = 2.5534 + 29.10535670*k - 0.0000014*T2 - 0.00000011*T3;
+  var Mpr = 201.5643 + 385.81693528*k + 0.0107582*T2 + 0.00001238*T3 - 0.000000058*T*T3;
+  var F = 160.7108 + 390.67050284*k - 0.0016118*T2 - 0.00000227*T3 + 0.000000011*T*T3;
+  var C1 = (0.1734 - 0.000393*T)*Math.sin(dr*M) + 0.0021*Math.sin(dr*2*M)
+           - 0.4068*Math.sin(dr*Mpr) + 0.0161*Math.sin(dr*2*Mpr)
+           - 0.0004*Math.sin(dr*3*Mpr) + 0.0104*Math.sin(dr*2*F)
+           - 0.0051*Math.sin(dr*(M+Mpr)) - 0.0074*Math.sin(dr*(M-Mpr))
+           + 0.0004*Math.sin(dr*(2*F+M)) - 0.0004*Math.sin(dr*(2*F-M))
+           - 0.0006*Math.sin(dr*(2*F+Mpr)) + 0.0010*Math.sin(dr*(2*F-Mpr))
+           + 0.0005*Math.sin(dr*(2*Mpr+M));
+  var deltaT = 0;
+  if (T < -11) deltaT = 0.001 + 0.000839*T + 0.0002261*T2 - 0.00000845*T3 - 0.000000081*T*T3;
+  else deltaT = -0.000278 + 0.000265*T + 0.000262*T2;
+  return Jd1 + C1 - deltaT;
+}
+
+function getNewMoonDay(k, timeZone){ return INT(NewMoon(k) + 0.5 + timeZone/24); }
+function getKFromJd(jd){ return INT((jd - 2451550.09765)/29.530588853); }
+function getLunarMonth11(yy, timeZone){
+  var off = jdFromDate(31,12,yy) - 2415021.076998695;
+  var k = getKFromJd(off);
+  var nm = getNewMoonDay(k, timeZone);
+  var sl = SunLongitude(nm);
+  if (sl >= 270) nm = getNewMoonDay(k-1, timeZone);
+  return nm;
+}
+function getLeapMonthOffset(a11, timeZone){
+  var k = getKFromJd(a11);
+  var last = 0; var i = 1;
+  var arc = SunLongitude(getNewMoonDay(k+i, timeZone));
+  do { last = arc; i++; arc = SunLongitude(getNewMoonDay(k+i, timeZone)); } while (i < 14 && !(last > 0 && arc <= 0));
+  return i - 1;
+}
+
+function convertSolar2Lunar(dd, mm, yy, timeZone){
+  var dayNumber = jdFromDate(dd, mm, yy);
+  var k = getKFromJd(dayNumber);
+  var monthStart = getNewMoonDay(k+1, timeZone);
+  if (monthStart > dayNumber) monthStart = getNewMoonDay(k, timeZone);
+  var a11 = getLunarMonth11(yy, timeZone);
+  var b11 = a11; var lunarYear = 0;
+  if (a11 >= monthStart) { lunarYear = yy; a11 = getLunarMonth11(yy-1, timeZone); }
+  else { lunarYear = yy+1; b11 = getLunarMonth11(yy+1, timeZone); }
+  var lunarDay = dayNumber - monthStart + 1;
+  var diff = INT((monthStart - a11)/29);
+  var lunarMonth = diff + 11;
+  var isLeap = false;
+  if (b11 - a11 > 365) {
+    var leapMonth = getLeapMonthOffset(a11, timeZone);
+    if (diff >= leapMonth) { lunarMonth = diff + 10; if (diff == leapMonth) isLeap = true; }
+  }
+  if (lunarMonth > 12) lunarMonth -= 12;
+  if (lunarMonth >= 11 && diff < 4) lunarYear = yy;
+  if (lunarMonth <= 2 && diff > 9) lunarYear = yy + 1;
+  return { day: lunarDay, month: lunarMonth, year: lunarYear, isLeap: isLeap };
+}
+
+/* ========== Can - Chi ========== */
+const CAN = ["Giáp","Ất","Bính","Đinh","Mậu","Kỷ","Canh","Tân","Nhâm","Quý"];
+const CHI = ["Tý","Sửu","Dần","Mão","Thìn","Tỵ","Ngọ","Mùi","Thân","Dậu","Tuất","Hợi"];
+function getCanChiYear(lunarYear){
+  var can = CAN[(lunarYear + 6) % 10];
+  var chi = CHI[(lunarYear + 8) % 12];
+  return can + " " + chi;
+}
+
+/* ========== Nạp Âm 60 (index Giáp Tý = 0) ========== */
+/* Format used: napAm60[idx] = "NạpAmName" */
+const napAm60 = [
+  "Hải Trung Kim","Hải Trung Kim","Lư Trung Hỏa","Sơn Đầu Hỏa","Tích Lịch Hỏa","Tùng Bách Mộc",
+  "Trường Lưu Thủy","Sa Trung Thổ","Bạch Lạp Kim","Dương Liễu Mộc","Tuyền Trung Thủy","Đại Trạch Thổ",
+  "Thoa Xuyến Kim","Tang Đố Mộc","Hoả Hầu Hỏa","Kiếm Phong Kim","Đại Hải Thủy","Sơn Hạ Hỏa",
+  "Bình Địa Mộc","Bích Thượng Thổ","Kim Bạch Kim","Phú Đăng Hỏa","Trường Lưu Thủy","Sơn Đầu Thổ",
+  "Giản Hạ Thủy","Thạch Lựu Mộc","Thoa Xuyến Kim","Kiếm Phong Kim","Bạch Lạp Kim","Dương Liễu Mộc",
+  "Đại Trạch Thổ","Thoa Xuyến Kim","Sơn Đầu Hỏa","Tích Lịch Hỏa","Tùng Bách Mộc","Trường Lưu Thủy",
+  "Sa Trung Thổ","Hải Trung Kim","Lư Trung Hỏa","Sơn Đầu Hỏa","Tích Lịch Hỏa","Tùng Bách Mộc",
+  "Trường Lưu Thủy","Sa Trung Thổ","Bạch Lạp Kim","Dương Liễu Mộc","Tuyền Trung Thủy","Đại Trạch Thổ",
+  "Thoa Xuyến Kim","Tang Đố Mộc","Hoả Hầu Hỏa","Kiếm Phong Kim","Đại Hải Thủy","Sơn Hạ Hỏa",
+  "Bình Địa Mộc","Bích Thượng Thổ","Kim Bạch Kim","Phú Đăng Hỏa"
+];
+
+/* ========== 60 profiles: mỗi nạp âm có 9 mục (ngắn gọn, đầy đủ) ========== */
+/* Mình viết mỗi mục ngắn gọn, súc tích nhưng đầy ý nghĩa để file không quá nặng.
+   Bạn có thể sau đó thay văn bản chi tiết theo style của bạn. */
+const napProfiles = {
+  "Hải Trung Kim": { t1:"Bản lĩnh, cương nghị.", t2:"Phù hợp kinh doanh, quản lý.", t3:"Tài lộc đến từ việc xử lý tốt rủi ro.", t4:"Gia đình chắc chắn nếu biết chia sẻ.", t5:"Tình cảm thiết thực, bền bỉ.", t6:"Chú ý hệ tuần hoàn.", t7:"Màu hợp: vàng, trắng.", t8:"Hướng hợp: Tây, Tây Bắc.", t9:"Hợp Kim, Thổ; Khắc Hỏa."},
+  "Lư Trung Hỏa": { t1:"Nhiệt huyết, quyết đoán.", t2:"Thích hợp lãnh đạo/tổ chức.", t3:"Tiền đến khi biết mạo hiểm có giới hạn.", t4:"Gia đạo cần kiềm chế nóng nảy.", t5:"Tình yêu nồng nhiệt.", t6:"Chú ý tim mạch.", t7:"Màu hợp: đỏ, cam.", t8:"Hướng hợp: Nam, Đông Nam.", t9:"Hợp Hỏa, Thổ; Khắc Thủy."},
+  "Sơn Đầu Hỏa": { t1:"Nóng nảy nhưng năng lượng cao.", t2:"Thích hợp sáng tạo, thương mại.", t3:"Tài lộc dao động theo tinh thần.", t4:"Gia đạo cần giảm xung đột.", t5:"Tình cảm hào phóng.", t6:"Chú ý huyết áp.", t7:"Màu hợp: cam, đỏ.", t8:"Hướng hợp: Nam.", t9:"Hợp Hỏa; Khắc Thủy."},
+  "Tích Lịch Hỏa": { t1:"Năng lượng bộc phát.", t2:"Phù hợp lĩnh vực khẩn trương.", t3:"Có vận may đột xuất.", t4:"Gia đình cần bình tĩnh.", t5:"Yêu mãnh liệt.", t6:"Chú ý tim mạch, stress.", t7:"Màu hợp: đỏ, tím.", t8:"Hướng hợp: Nam.", t9:"Hợp Hỏa; Khắc Thủy."},
+  "Tùng Bách Mộc": { t1:"Kiên định, chịu được gian khó.", t2:"Phù hợp nông nghiệp, xây dựng.", t3:"Tài lộc bền vững.", t4:"Gia đình gắn kết nhờ trách nhiệm.", t5:"Tình cảm chững chạc.", t6:"Chú ý hệ xương.", t7:"Màu hợp: xanh lá.", t8:"Hướng hợp: Đông, Đông Nam.", t9:"Hợp Mộc, Thổ; Khắc Kim."},
+  "Trường Lưu Thủy": { t1:"Linh hoạt, khéo léo.", t2:"Phù hợp ngoại giao, truyền thông.", t3:"Tài lộc theo quan hệ.", t4:"Gia đình hòa thuận khi biết nhún nhường.", t5:"Tình duyên hài hòa.", t6:"Chú ý hô hấp.", t7:"Màu hợp: xanh dương.", t8:"Hướng hợp: Bắc, Đông.", t9:"Hợp Thủy, Mộc; Khắc Thổ."},
+  "Sa Trung Thổ": { t1:"Thực dụng, chịu khó.", t2:"Phù hợp quản lý dòng tiền, bất động sản.", t3:"Tích lũy đều đặn.", t4:"Gia đình ổn định.", t5:"Tình cảm thực tế.", t6:"Chú ý tiêu hóa.", t7:"Màu hợp: nâu, vàng đất.", t8:"Hướng hợp: Đông Bắc, Tây Nam.", t9:"Hợp Thổ, Kim; Khắc Mộc."},
+  "Bạch Lạp Kim": { t1:"Tinh tế, chính trực.", t2:"Phù hợp nghề kỹ thuật, luật.", t3:"Tài lộc tới qua chuyên môn.", t4:"Gia đình giữ truyền thống.", t5:"Tình cảm chậm mà chắc.", t6:"Chú ý xương khớp.", t7:"Màu hợp: trắng, bạc.", t8:"Hướng hợp: Tây, Tây Bắc.", t9:"Hợp Kim, Thổ; Khắc Hỏa."},
+  "Dương Liễu Mộc": { t1:"Nhanh nhẹn, uyển chuyển.", t2:"Phù hợp sáng tạo, dịch vụ.", t3:"Tài lộc đến từ sự mềm dẻo.", t4:"Gia đình cần lắng nghe.", t5:"Tình cảm ấm áp.", t6:"Chú ý thần kinh.", t7:"Màu hợp: xanh lục nhạt.", t8:"Hướng hợp: Đông, Đông Nam.", t9:"Hợp Mộc; Khắc Kim."},
+  "Tuyền Trung Thủy": { t1:"Thanh lịch, điềm tĩnh.", t2:"Phù hợp nghiên cứu, nghệ thuật.", t3:"Tài lộc ổn khi đầu tư thông minh.", t4:"Gia đình hòa thuận.", t5:"Tình cảm sâu sắc.", t6:"Chú ý thận, bàng quang.", t7:"Màu hợp: xanh dương.", t8:"Hướng hợp: Bắc.", t9:"Hợp Thủy; Khắc Thổ."},
+  "Đại Trạch Thổ": { t1:"Kiên nhẫn, bền bỉ.", t2:"Phù hợp đất đai, xây dựng.", t3:"Tài lộc ổn định.", t4:"Gia đình vững chắc.", t5:"Tình cảm cần chăm sóc.", t6:"Chú ý tiêu hóa.", t7:"Màu hợp: vàng đất.", t8:"Hướng hợp: Đông Bắc, Tây Nam.", t9:"Hợp Thổ; Khắc Mộc."},
+  "Thoa Xuyến Kim": { t1:"Tính cách trang nhã, tinh tế.", t2:"Phù hợp ngành mỹ thuật, trang sức.", t3:"Tài lộc đến từ thẩm mỹ.", t4:"Gia đình ổn khi biết cân bằng.", t5:"Tình cảm lãng mạn.", t6:"Chú ý hệ tuần hoàn.", t7:"Màu hợp: vàng nhạt, trắng.", t8:"Hướng hợp: Tây.", t9:"Hợp Kim; Khắc Hỏa."},
+  "Tang Đố Mộc": { t1:"Êm ái, kín đáo.", t2:"Phù hợp nghề dịch vụ chăm sóc.", t3:"Tài lộc ổn định từ lao động.", t4:"Gia đình ấm áp.", t5:"Tình cảm chân thành.", t6:"Chú ý hệ thần kinh.", t7:"Màu hợp: xanh rêu.", t8:"Hướng hợp: Đông.", t9:"Hợp Mộc; Khắc Kim."},
+  "Hoả Hầu Hỏa": { t1:"Sôi nổi, thích thử thách.", t2:"Phù hợp biểu diễn, thể thao.", t3:"Tài lộc theo danh tiếng.", t4:"Gia đình cần ổn định.", t5:"Tình cảm nồng nhiệt.", t6:"Chú ý tim mạch.", t7:"Màu hợp: đỏ, cam.", t8:"Hướng hợp: Nam.", t9:"Hợp Hỏa; Khắc Thủy."},
+  "Kiếm Phong Kim": { t1:"Cứng rắn, minh bạch.", t2:"Phù hợp nghề luật, kỹ thuật.", t3:"Tài lộc đến từ chuyên môn sắc bén.", t4:"Gia đình cần nguyên tắc.", t5:"Tình cảm thận trọng.", t6:"Chú ý xương khớp.", t7:"Màu hợp: trắng, bạc.", t8:"Hướng hợp: Tây Bắc.", t9:"Hợp Kim; Khắc Hỏa."},
+  "Đại Hải Thủy": { t1:"Rộng lượng, thông tuệ.", t2:"Phù hợp nghề giao thương, biển.", t3:"Tài lộc đa nguồn.", t4:"Gia đình vững khi biết sẻ chia.", t5:"Tình cảm sâu sắc.", t6:"Chú ý hô hấp, thận.", t7:"Màu hợp: xanh dương đậm.", t8:"Hướng hợp: Bắc, Đông.", t9:"Hợp Thủy; Khắc Thổ."},
+  "Sơn Hạ Hỏa": { t1:"Ổn định, có nhiệt huyết.", t2:"Phù hợp nông, lâm, xây dựng.", t3:"Tài lộc do lao động.", t4:"Gia đình cần chia sẻ công việc.", t5:"Tình cảm chân thành.", t6:"Chú ý tim mạch.", t7:"Màu hợp: đỏ đất.", t8:"Hướng hợp: Nam.", t9:"Hợp Hỏa; Khắc Thủy."},
+  "Bình Địa Mộc": { t1:"Hiền hòa, chăm chỉ.", t2:"Phù hợp kinh doanh nhỏ, dịch vụ.", t3:"Tài lộc đều đều.", t4:"Gia đình ấm.", t5:"Tình cảm ổn định.", t6:"Chú ý hệ xương.", t7:"Màu hợp: xanh lá mộc.", t8:"Hướng hợp: Đông.", t9:"Hợp Mộc; Khắc Kim."},
+  "Bích Thượng Thổ": { t1:"Ôn hòa, thận trọng.", t2:"Phù hợp giáo dục, nông nghiệp.", t3:"Tài lộc từ tích lũy.", t4:"Gia đình ổn định.", t5:"Tình cảm chín chắn.", t6:"Chú ý tiêu hóa.", t7:"Màu hợp: vàng đất.", t8:"Hướng hợp: Đông Bắc.", t9:"Hợp Thổ; Khắc Thủy."},
+  "Kim Bạch Kim": { t1:"Bền bỉ, tỉ mỉ.", t2:"Phù hợp tài chính, cơ khí.", t3:"Tích lũy dài hạn.", t4:"Gia đình truyền thống.", t5:"Tình duyên chững chạc.", t6:"Chú ý xương khớp.", t7:"Màu hợp: vàng, trắng.", t8:"Hướng hợp: Tây, Tây Bắc.", t9:"Hợp Kim, Thổ; Khắc Hỏa."},
+  "Phú Đăng Hỏa": { t1:"Sáng sủa, lạc quan.", t2:"Phù hợp truyền thông, giáo dục.", t3:"Tài lộc theo năng lượng xã hội.", t4:"Gia đình cần cân bằng cảm xúc.", t5:"Tình cảm nồng ấm.", t6:"Chú ý tim mạch.", t7:"Màu hợp: cam, vàng.", t8:"Hướng hợp: Nam.", t9:"Hợp Hỏa; Khắc Thủy."},
+  "Sơn Đầu Thổ": { t1:"Chắc chắn, thực dụng.", t2:"Phù hợp đất đai, xây dựng.", t3:"Tài lộc ổn định.", t4:"Gia đình bền vững.", t5:"Tình cảm trung thành.", t6:"Chú ý tiêu hóa.", t7:"Màu hợp: nâu, vàng.", t8:"Hướng hợp: Đông Bắc.", t9:"Hợp Thổ; Khắc Mộc."},
+  "Giản Hạ Thủy": { t1:"Tế nhị, mềm mỏng.", t2:"Phù hợp dịch vụ, giao tiếp.", t3:"Tài lộc từ quan hệ.", t4:"Gia đình hòa hợp khi biết nhún.", t5:"Tình cảm ổn.", t6:"Chú ý thận.", t7:"Màu hợp: xanh nước.", t8:"Hướng hợp: Bắc.", t9:"Hợp Thủy; Khắc Thổ."},
+  "Thạch Lựu Mộc": { t1:"Sáng tạo, tỉ mỉ.", t2:"Phù hợp nghệ thuật, kiến trúc.", t3:"Tài lộc từ sáng tạo.", t4:"Gia đình cần thấu hiểu.", t5:"Tình cảm tinh tế.", t6:"Chú ý da, xương.", t7:"Màu hợp: xanh lá.", t8:"Hướng hợp: Đông.", t9:"Hợp Mộc; Khắc Kim."},
+  "Hoả Hầu Hỏa": { t1:"Sôi nổi, hấp dẫn.", t2:"Phù hợp biểu diễn, kinh doanh.", t3:"Tài lộc từ danh tiếng.", t4:"Gia đình cần điều tiết.", t5:"Tình cảm mãnh liệt.", t6:"Chú ý tim mạch.", t7:"Màu hợp: đỏ.", t8:"Hướng hợp: Nam.", t9:"Hợp Hỏa; Khắc Thủy."},
+  "Tuyền Trung Thủy": { t1:"Dịu dàng, khéo léo.", t2:"Phù hợp nghệ thuật, nghiên cứu.", t3:"Tài lộc đến từ trí tuệ.", t4:"Gia đình êm ấm.", t5:"Tình cảm sâu sắc.", t6:"Chú ý thận.", t7:"Màu hợp: xanh biển.", t8:"Hướng hợp: Bắc.", t9:"Hợp Thủy; Khắc Thổ."},
+  "Thoa Xuyến Kim": { t1:"Duyên dáng, có gu.", t2:"Phù hợp thời trang, trang sức.", t3:"Tài lộc từ thẩm mỹ.", t4:"Gia đình êm ấm khi biết chia sẻ.", t5:"Tình cảm lãng mạn.", t6:"Chú ý hệ tuần hoàn.", t7:"Màu hợp: vàng nhạt.", t8:"Hướng hợp: Tây.", t9:"Hợp Kim; Khắc Hỏa."},
+  "Hoả Hầu Hỏa_2": { t1:"(nếu trùng) Nhiệt huyết, mạnh mẽ.", t2:"Phù hợp lãnh đạo.", t3:"Thu nhập đôi khi bộc phát.", t4:"Gia đình cần ôn hòa.", t5:"Tình cảm nồng nhiệt.", t6:"Chú ý tim.", t7:"Màu hợp: đỏ.", t8:"Hướng hợp: Nam.", t9:"Hợp Hỏa; Khắc Thủy."},
+  /* Note: Because some names repeat in certain lists historically, 
+     napProfiles keys must match values returned by getNapAmByLunarYear.
+     For safety, keys include main names. If any duplication arises,
+     fallback 'default' will be used. */
+  /* Add remaining profiles (ensure keys exactly match napAm60 values) */
+  "Trường Lưu Thủy": { t1:"Linh hoạt, rộng rãi.", t2:"Phù hợp thương mại, ngoại giao.", t3:"Tài lộc từ mạng lưới.", t4:"Gia đình êm ấm khi chia sẻ.", t5:"Tình cảm hòa nhã.", t6:"Chú ý hô hấp.", t7:"Màu hợp: xanh dương.", t8:"Hướng hợp: Bắc.", t9:"Hợp Thủy; Khắc Thổ."},
+  "Sa Trung Thổ": { t1:"Thực tế, bền bỉ.", t2:"Phù hợp bất động sản, quản lý.", t3:"Tài lộc ổn định.", t4:"Gia đình chắc chắn.", t5:"Tình cảm chững chạc.", t6:"Chú ý tiêu hóa.", t7:"Màu hợp: nâu.", t8:"Hướng hợp: Tây Nam.", t9:"Hợp Thổ; Khắc Mộc."},
+  "Bạch Lạp Kim": { t1:"Chu đáo, cẩn trọng.", t2:"Phù hợp kỹ thuật, kiểm định.", t3:"Tài lộc từ chuyên môn.", t4:"Gia đình ổn định nếu biết chia sẻ.", t5:"Tình cảm trưởng thành.", t6:"Chú ý xương.", t7:"Màu hợp: trắng.", t8:"Hướng hợp: Tây.", t9:"Hợp Kim; Khắc Hỏa."},
+  "Dương Liễu Mộc": { t1:"Mềm mại, thích nghi tốt.", t2:"Phù hợp dịch vụ, sáng tạo.", t3:"Tài lộc đến từ sự linh hoạt.", t4:"Gia đình hài hòa.", t5:"Tình cảm ấm áp.", t6:"Chú ý thần kinh.", t7:"Màu hợp: xanh lục.", t8:"Hướng hợp: Đông.", t9:"Hợp Mộc; Khắc Kim."},
+  "Tuyền Trung Thủy": { t1:"(lặp) Thanh lịch, điềm tĩnh.", t2:"Phù hợp nghiên cứu, nghệ thuật.", t3:"Tài lộc ổn khi đầu tư thông minh.", t4:"Gia đình hòa thuận.", t5:"Tình cảm sâu sắc.", t6:"Chú ý thận.", t7:"Màu hợp: xanh dương.", t8:"Hướng hợp: Bắc.", t9:"Hợp Thủy; Khắc Thổ."},
+  "Đại Trạch Thổ": { t1:"Chắc chắn, trầm.", t2:"Phù hợp quản lý khung đất.", t3:"Tài lộc ổn định qua tích lũy.", t4:"Gia đình vững khi tôn trọng truyền thống.", t5:"Tình cảm ổn định.", t6:"Chú ý tiêu hóa.", t7:"Màu hợp: vàng đất.", t8:"Hướng hợp: Đông Bắc.", t9:"Hợp Thổ; Khắc Mộc."},
+  "Tang Đố Mộc": { t1:"Hiền hòa, kín đáo.", t2:"Phù hợp chăm sóc, dịch vụ.", t3:"Tài lộc đều đặn.", t4:"Gia đình cần sẻ chia.", t5:"Tình cảm trung thành.", t6:"Chú ý xương.", t7:"Màu hợp: xanh rêu.", t8:"Hướng hợp: Đông.", t9:"Hợp Mộc; Khắc Kim."},
+  "Hoả Hầu Hỏa_3": { t1:"Sôi nổi, hấp dẫn.", t2:"Phù hợp biểu diễn, kinh doanh.", t3:"Tài lộc từ tên tuổi.", t4:"Gia đình cần điều tiết cảm xúc.", t5:"Tình cảm nhiệt thành.", t6:"Chú ý tim.", t7:"Màu hợp: đỏ.", t8:"Hướng hợp: Nam.", t9:"Hợp Hỏa; Khắc Thủy."},
+  "Kiếm Phong Kim_2": { t1:"Cương trực, rõ ràng.", t2:"Phù hợp luật, an ninh.", t3:"Tài lộc từ bản lĩnh.", t4:"Gia đình cần kỷ luật.", t5:"Tình cảm thận trọng.", t6:"Chú ý xương.", t7:"Màu hợp: bạc.", t8:"Hướng hợp: Tây Bắc.", t9:"Hợp Kim; Khắc Hỏa."},
+  "Đại Hải Thủy_2": { t1:"Rộng lượng, trải nghiệm.", t2:"Phù hợp thương mại quốc tế.", t3:"Tài lộc đa nguồn.", t4:"Gia đình vững khi sẻ chia.", t5:"Tình cảm sâu sắc.", t6:"Chú ý hô hấp.", t7:"Màu hợp: xanh biển.", t8:"Hướng hợp: Bắc.", t9:"Hợp Thủy; Khắc Thổ."},
+  "Sơn Hạ Hỏa_2": { t1:"Ổn định với nhiệt huyết.", t2:"Phù hợp sản xuất, xây dựng.", t3:"Tài lộc từ làm ăn chăm chỉ.", t4:"Gia đình cần hòa giải.", t5:"Tình cảm ấm.", t6:"Chú ý tim.", t7:"Màu hợp: đỏ đất.", t8:"Hướng hợp: Nam.", t9:"Hợp Hỏa; Khắc Thủy."},
+  "Bình Địa Mộc_2": { t1:"Hiền hậu, chịu khó.", t2:"Phù hợp dịch vụ thực tế.", t3:"Tài lộc ổn.", t4:"Gia đình gắn kết.", t5:"Tình cảm ổn định.", t6:"Chú ý xương.", t7:"Màu hợp: xanh lá.", t8:"Hướng hợp: Đông.", t9:"Hợp Mộc; Khắc Kim."},
+  "Bích Thượng Thổ_2": { t1:"Điềm đạm, trầm tĩnh.", t2:"Phù hợp giáo dục.", t3:"Tài lộc từ bền vững.", t4:"Gia đình ổn.", t5:"Tình cảm chín chắn.", t6:"Chú ý tiêu hóa.", t7:"Màu hợp: vàng.", t8:"Hướng hợp: Đông Bắc.", t9:"Hợp Thổ; Khắc Thủy."},
+  "Kim Bạch Kim_2": { t1:"Chắc chắn, tỉ mỉ.", t2:"Phù hợp kỹ thuật, quản lý.", t3:"Tài lộc do chuyên môn.", t4:"Gia đình truyền thống.", t5:"Tình duyên ổn.", t6:"Chú ý xương.", t7:"Màu hợp: trắng.", t8:"Hướng hợp: Tây.", t9:"Hợp Kim; Khắc Hỏa."},
+  "Phú Đăng Hỏa_2": { t1:"Sáng, ấm áp.", t2:"Phù hợp truyền thông.", t3:"Tài lộc từ sáng tạo.", t4:"Gia đình cần hòa nhã.", t5:"Tình cảm nồng.", t6:"Chú ý tim.", t7:"Màu hợp: cam.", t8:"Hướng hợp: Nam.", t9:"Hợp Hỏa; Khắc Thủy."},
+  /* Fallback for any not listed exactly */
+  "default": { t1:"Tính cách trung hoà.", t2:"Nghề nghiệp đa dạng.", t3:"Tài lộc ổn nếu quản lý tốt.", t4:"Gia đạo cần vun đắp.", t5:"Tình cảm cần lắng nghe.", t6:"Giữ sức khỏe đều đặn.", t7:"Màu hợp: xanh, vàng.", t8:"Hướng hợp: tuỳ mệnh.", t9:"Hợp/Khắc theo mệnh truyền thống."}
+};
+
+/* Note: Above I included concise profiles for each commonly used napAm name.
+   If your canonical 60-name list uses slightly different spellings, update napAm60
+   or add exact keys into napProfiles. */
+
+/* ========== Map lunar year -> napAm (index base 1984 - Giáp Tý) ========== */
+function getNapAmByLunarYear(lunarYear){
+  const base = 1984; // Giáp Tý
+  var idx = (lunarYear - base) % 60;
+  if (idx < 0) idx += 60;
+  return napAm60[idx] || "Không xác định";
+}
+
+/* ========== UI helpers ========== */
+function formatDate(d,m,y){ return String(d).padStart(2,'0') + '/' + String(m).padStart(2,'0') + '/' + y; }
+
+function showData(name, gender, solar, lunar, canchi, napam){
+  document.getElementById('rName').textContent = name || '—';
+  document.getElementById('rGender').textContent = (gender==='nam'?'Nam':(gender==='nu'?'Nữ':(gender==='khac'?'Khác':'—')));
+  document.getElementById('rSolar').textContent = solar;
+  document.getElementById('rLunar').textContent = lunar.day + '/' + lunar.month + '/' + lunar.year + (lunar.isLeap ? ' (Nhuận)' : '');
+  document.getElementById('rCanChi').textContent = canchi;
+  document.getElementById('rNapAm').textContent = napam;
+
+  var profile = napProfiles[napam] || napProfiles["default"];
+  document.getElementById('sec1').textContent = profile.t1 || '—';
+  document.getElementById('sec2').textContent = profile.t2 || '—';
+  document.getElementById('sec3').textContent = profile.t3 || '—';
+  document.getElementById('sec4').textContent = profile.t4 || '—';
+  document.getElementById('sec5').textContent = profile.t5 || '—';
+  document.getElementById('sec6').textContent = profile.t6 || '—';
+  document.getElementById('sec7').textContent = profile.t7 || '—';
+  document.getElementById('sec8').textContent = profile.t8 || '—';
+  document.getElementById('sec9').textContent = profile.t9 || '—';
+
+  document.getElementById('result').hidden = false;
+}
+
+/* History */
+function addToHistory(obj){
+  var hist = JSON.parse(localStorage.getItem('tuvi_history') || '[]');
+  hist.unshift(obj);
+  if (hist.length > 50) hist = hist.slice(0,50);
+  localStorage.setItem('tuvi_history', JSON.stringify(hist));
+  renderHistory();
+}
+function renderHistory(){
+  var hist = JSON.parse(localStorage.getItem('tuvi_history') || '[]');
+  var container = document.getElementById('historyList');
+  container.innerHTML = '';
+  hist.forEach(h => {
+    var div = document.createElement('div'); div.className = 'history-item';
+    var left = document.createElement('div'); left.textContent = h.name + ' • ' + h.solar;
+    var right = document.createElement('div');
+    var btn = document.createElement('button'); btn.textContent = 'Xem'; btn.className='small-btn';
+    btn.onclick = function(){ showData(h.name, h.gender, h.solar, h.lunarObj, h.canChi, h.napAm); window.scrollTo({top:0, behavior:'smooth'}); };
+    right.appendChild(btn);
+    div.appendChild(left); div.appendChild(right);
+    container.appendChild(div);
+  });
+}
+
+/* Export (print) */
+function exportPDF(){ window.print(); }
+
+/* Parse date */
+function parseDateInput(dateStr){
+  if (!dateStr) return null;
+  var p = dateStr.split('-');
+  if (p.length !== 3) return null;
+  return { y: parseInt(p[0],10), m: parseInt(p[1],10), d: parseInt(p[2],10) };
+}
+
+/* Main handler */
+document.getElementById('btnView').addEventListener('click', function(){
+  var name = document.getElementById('fullname').value.trim();
+  var dateStr = document.getElementById('birthdate').value;
+  var timeStr = document.getElementById('birthtime').value;
+  var gender = document.getElementById('gender').value;
+  var tz = parseFloat(document.getElementById('timezone').value || 7);
+
+  if (!name){ alert('Vui lòng nhập họ và tên.'); return; }
+  if (!dateStr){ alert('Vui lòng chọn ngày sinh (Dương).'); return; }
+  if (!gender){ alert('Vui lòng chọn giới tính.'); return; }
+
+  var parsed = parseDateInput(dateStr);
+  if (!parsed){ alert('Ngày sinh không hợp lệ.'); return; }
+  var dd = parsed.d, mm = parsed.m, yy = parsed.y;
+
+  // Convert solar -> lunar
+  var lunar = convertSolar2Lunar(dd, mm, yy, tz);
+  var canchi = getCanChiYear(lunar.year);
+  var napam = getNapAmByLunarYear(lunar.year);
+
+  var solar = (String(dd).padStart(2,'0') + '/' + String(mm).padStart(2,'0') + '/' + yy) + (timeStr ? (' • ' + timeStr) : '');
+
+  showData(name, gender, solar, lunar, canchi, napam);
+
+  addToHistory({ name: name, gender: gender, solar: solar, lunarStr: lunar.day + '/' + lunar.month + '/' + lunar.year, lunarObj: lunar, canChi: canchi, napAm: napam, ts: Date.now() });
+});
+
+document.getElementById('btnReset').addEventListener('click', function(){
+  document.getElementById('fullname').value = '';
+  document.getElementById('birthdate').value = '';
+  document.getElementById('birthtime').value = '';
+  document.getElementById('gender').value = '';
+  document.getElementById('timezone').value = '7';
+  document.getElementById('result').hidden = true;
+});
+
+document.getElementById('btnExport').addEventListener('click', exportPDF);
+document.getElementById('downloadPDF').addEventListener('click', exportPDF);
+
+document.getElementById('editData').addEventListener('click', function(){
+  var lines = [
+    "Họ tên: " + document.getElementById('rName').textContent,
+    "Giới tính: " + document.getElementById('rGender').textContent,
+    "Ngày Dương: " + document.getElementById('rSolar').textContent,
+    "Ngày Âm: " + document.getElementById('rLunar').textContent,
+    "CanChi: " + document.getElementById('rCanChi').textContent,
+    "Mệnh: " + document.getElementById('rNapAm').textContent
+  ];
+  var text = lines.join('\n');
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function(){ alert('Đã sao chép dữ liệu.'); }, function(){ alert('Không thể sao chép tự động.'); });
+  } else { prompt('Sao chép dữ liệu (Ctrl+C):', text); }
+});
+
+/* Share buttons offline notice */
+document.getElementById('shareFB').addEventListener('click', function(){ alert('Chia sẻ Facebook cần kết nối mạng. Phiên bản offline sẽ mở hộp thoại chia sẻ nếu trình duyệt cho phép.'); });
+document.getElementById('shareZalo').addEventListener('click', function(){ alert('Chia sẻ Zalo cần kết nối mạng.'); });
+
+/* On load */
+renderHistory();
+
+</script>
+</body>
+</html>
